@@ -126,7 +126,9 @@ Navigasi: **bottom navigation** untuk Beranda dan Akun, **drawer** untuk kelima 
 ### Panduan untuk anggota
 
 1. Kerjakan hanya di `lib/modules/<modulmu>/`: halaman di `<modul>_screen.dart`,
-   model Dart di `models/`, widget tambahan di `widgets/`.
+   model Dart di `models/`, widget tambahan di `widgets/`. Contoh modul yang sudah jadi:
+   `lib/modules/death_clock/` (model, service, halaman daftar dengan filter, dan tesnya di
+   `test/modules/death_clock/`).
 2. Ambil data dengan klien bersama:
 
    ```dart
