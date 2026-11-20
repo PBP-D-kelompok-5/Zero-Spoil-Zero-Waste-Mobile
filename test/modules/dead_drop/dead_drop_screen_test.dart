@@ -89,4 +89,55 @@ void main() {
     expect(find.text('Masih segar'), findsOneWidget);
     expect(find.text('Temui saya di gerbang'), findsOneWidget);
   });
+
+  testWidgets('status filters request and display the selected listings', (
+    tester,
+  ) async {
+    final requestedStatuses = <String?>[];
+    final api = ApiClient(
+      baseUrl: 'https://example.test',
+      httpClient: MockClient((request) async {
+        final status = request.url.queryParameters['status'];
+        requestedStatuses.add(status);
+
+        final listing = Map<String, dynamic>.from(listingJson);
+        if (status == 'reserved') {
+          listing['food_name'] = 'Bayam';
+          listing['status'] = 'reserved';
+          listing['status_label'] = 'Reserved';
+        } else if (status == 'claimed') {
+          listing['food_name'] = 'Jagung';
+          listing['status'] = 'claimed';
+          listing['status_label'] = 'Claimed';
+        }
+
+        return http.Response(
+          jsonEncode([listing]),
+          200,
+          headers: {'content-type': 'application/json'},
+        );
+      }),
+    );
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider<ApiClient>.value(
+        value: api,
+        child: const MaterialApp(home: DeadDropScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Kangkung'), findsOneWidget);
+
+    await tester.tap(find.text('Reservasi'));
+    await tester.pumpAndSettle();
+    expect(requestedStatuses, contains('reserved'));
+    expect(find.text('Bayam'), findsOneWidget);
+    expect(find.text('Kangkung'), findsNothing);
+
+    await tester.tap(find.text('Riwayat klaim'));
+    await tester.pumpAndSettle();
+    expect(requestedStatuses, contains('claimed'));
+    expect(find.text('Jagung'), findsOneWidget);
+    expect(find.text('Bayam'), findsNothing);
+  });
 }
