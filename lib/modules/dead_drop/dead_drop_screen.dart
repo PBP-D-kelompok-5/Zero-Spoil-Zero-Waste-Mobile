@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/api_client.dart';
 import 'dead_drop_service.dart';
 import 'models/food_listing.dart';
+import 'dead_drop_detail_screen.dart';
 
 class DeadDropScreen extends StatefulWidget {
   const DeadDropScreen({super.key});
@@ -72,14 +73,19 @@ class _DeadDropScreenState extends State<DeadDropScreen> {
               final listing = listings[index];
 
               return Card(
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: ListTile(
                   title: Text(listing.foodName),
                   subtitle: Text(listing.pickupLocation),
                   trailing: Text(listing.statusLabel),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) =>
+                            DeadDropDetailScreen(listingId: listing.id),
+                      ),
+                    );
+                  },
                 ),
               );
             },
